@@ -1,0 +1,3 @@
+Functional Programming adalah ketika kita menulis kumpulan blok program menggunakan functions 
+dan menghindari state dan data yang mutable 
+(mutable berarti kita dapat dengan mudah membuat struktur data atau memodifikasi yang sudah ada)

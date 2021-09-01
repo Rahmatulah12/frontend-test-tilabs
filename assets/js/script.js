@@ -26,6 +26,10 @@ buttonNext.addEventListener('click', (e) => {
 });
 
 window.onload = () => {
+    defaulViewStart();
+}
+
+function defaulViewStart() {
     sessionStorage.clear();
     content2.classList.add("hidden")
     containerFormPilGan.classList.add("hidden");
@@ -34,6 +38,7 @@ window.onload = () => {
     btnAdd.classList.add("hidden");
     content3.classList.add("hidden");
     content4.classList.add("hidden");
+    content5.classList.add("hidden");
 }
 
 const selectCategory = document.querySelector("#category");
@@ -459,5 +464,62 @@ function selesaiTest(idCurrent) {
 }
 
 function lihatJawaban() {
-    alert("OK");
+    let html = '';
+    let dataJawaban = JSON.parse(sessionStorage.getItem('jawaban'));
+
+    html += `
+        <div class="card mx-auto mt-5" style="width: 50%;">
+            <div class="card-header bg-white">
+                <h5 class="text-center mt-3">Jawaban</h5>
+            </div>
+            <div class="card-body">
+    `;
+
+    for (i = 0; i < dataJawaban.length; i++) {
+        let type = dataJawaban[i].type ? dataJawaban[i].type : null;
+        let soal = dataJawaban[i].soal ? dataJawaban[i].soal : null;
+        let jawaban = dataJawaban[i].jawaban ? dataJawaban[i].jawaban : null;
+        if (type == 'pilgan') {
+            html += `
+                <h6 class="text-center my-2">
+                    Jawaban Pilihan Ganda
+                </h6>
+                <p class="my-0 px-2 bg-warning">Q: ${soal}</p>
+                <p class="my-0 px-2 bg-success">A: ${jawaban}</p>
+            `;
+        } else if (type == 'pendek') {
+            html += `
+                <h6 class="text-center my-2">
+                    Jawaban Pendek
+                </h6>
+                <p class="my-0 px-2 bg-warning">Q: ${soal}</p>
+                <p class="my-0 px-2 bg-success">A: ${jawaban}</p>
+            `;
+
+        } else if (type == 'text') {
+            html += `
+                <h6 class="text-center my-2">
+                    Jawaban Text
+                </h6>
+                <p class="my-0 px-2 bg-warning">Q: ${soal}</p>
+                <p class="my-0 px-2 bg-success">A: ${jawaban}</p>
+            `;
+        }
+    }
+
+    html += `
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closed()">CLOSE</button>
+                </div>
+            </div>
+        </div>
+    `;
+    content5.innerHTML = html;
+    content4.classList.add("hidden");
+    content5.classList.remove("hidden");
+}
+
+function closed() {
+    content1.classList.remove('hidden');
+    defaulViewStart();
 }
