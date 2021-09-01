@@ -3,6 +3,8 @@ const formData = document.querySelector("#formData");
 const content1 = document.querySelector("#content1")
 const content2 = document.querySelector("#content2")
 const content3 = document.querySelector("#content3")
+const content4 = document.querySelector("#content4")
+const content5 = document.querySelector("#content5")
 const containerFormPilGan = document.querySelector("#containerFormPilGan");
 const containerFormPendek = document.querySelector("#containerFormPendek");
 const containerFormText = document.querySelector("#containerFormText");
@@ -31,6 +33,7 @@ window.onload = () => {
     containerFormText.classList.add("hidden");
     btnAdd.classList.add("hidden");
     content3.classList.add("hidden");
+    content4.classList.add("hidden");
 }
 
 const selectCategory = document.querySelector("#category");
@@ -218,6 +221,7 @@ function showViewSoal() {
         let jawaban3 = data[i].jawaban3 ? data[i].jawaban3 : null;
         let jawaban4 = data[i].jawaban4 ? data[i].jawaban4 : null;
         let soal = data[i].soal ? data[i].soal : null;
+        let type = data[i].type ? data[i].type : null;
 
         let counter = i + 1;
 
@@ -233,7 +237,7 @@ function showViewSoal() {
             `;
         }
 
-        if (jawaban1 != null && jawaban2 != null && jawaban3 != null && jawaban4 != null) {
+        if (type == 'pilgan') {
             html += `
             <div class="row">
                 <h5 class="card-title my-5 text-center">
@@ -244,7 +248,8 @@ function showViewSoal() {
                 </h6>
                 <!-- Left -->
                 <div class="col-sm-6 col-md-6 col-lg-6">
-
+                <input type="hidden" value="${soal}" name="soal" id="soal${counter}"/>
+                <input type="hidden" value="${type}" name="type" id="type${counter}"/>
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="radio" name="jawaban" id="${jawaban1}"
                             value="${jawaban1}"
@@ -294,18 +299,38 @@ function showViewSoal() {
 
             </div>
             `;
-        } else {
+        } else if (type == 'pendek') {
             html += `
                 <div class="row">
                     <h5 class="card-title my-5 text-center">
-                        Soal Essai
+                        Soal Text
                     </h5>
                     <h6>
                         ${soal}
                     </h6>
+                    <input type="hidden" value="${soal}" name="soal" id="soal${counter}"/>
+                    <input type="hidden" value="${type}" name="type" id="type${counter}"/>
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             <input type="text" class="form-control input-garis" id="jawaban_essai${counter}" name="jawaban">
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (type == 'text') {
+            html += `
+                <div class="row">
+                    <h5 class="card-title my-5 text-center">
+                        Soal Text
+                    </h5>
+                    <input type="hidden" value="${soal}" name="soal" id="soal${counter}"/>
+                    <input type="hidden" value="${type}" name="type" id="type${counter}"/>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Jawaban text" id="jawaban_essai${counter}"
+                                name="jawaban"
+                            ></textarea>
+                            <label for="jawaban_essai${counter}">${soal}</label>
                         </div>
                     </div>
                 </div>
@@ -325,7 +350,7 @@ function showViewSoal() {
             html += `
                 <button type="button" id="viewHasilTest" 
                     class="btn btn-sm btn-success text-white float-end my-4"
-                    onclick="selesaiTest()"
+                    onclick="selesaiTest(${counter})"
                 >
                     Selesai
                 </button>
@@ -348,20 +373,26 @@ function showViewSoal() {
 
 function showViewFormJawaban(idCurrent, idNext) {
     const form = document.querySelector(`#formJawaban${idCurrent}`);
-    console.log(form);
     const formData = new FormData(form);
     const dataStorageFormJawaban = sessionStorage.getItem('jawaban') ?
         sessionStorage.getItem('jawaban') : null;
+    const soal = document.querySelector(`#soal${idCurrent}`).value
+    const type = document.querySelector(`#type${idCurrent}`).value
 
     let data = {};
     let array = [];
 
+    formData.append("soal", soal)
+    formData.append("type", type)
+
     formData.forEach((value, index) => {
-        data[index] = value
+        if (value != "") {
+            data[index] = value
+        }
     });
 
     console.log(data);
-    return false;
+    // return false;
 
     array.push(data);
 
@@ -377,6 +408,56 @@ function showViewFormJawaban(idCurrent, idNext) {
     pageNext = document.querySelector(`#page${idNext}`).classList.remove("hidden");
 }
 
-function selesaiTest() {
+function selesaiTest(idCurrent) {
+    const form = document.querySelector(`#formJawaban${idCurrent}`);
+    const formData = new FormData(form);
+    const dataStorageFormJawaban = sessionStorage.getItem('jawaban') ?
+        sessionStorage.getItem('jawaban') : null;
+    const soal = document.querySelector(`#soal${idCurrent}`).value
+    const type = document.querySelector(`#type${idCurrent}`).value
 
+    let data = {};
+    let array = [];
+
+    formData.append("soal", soal)
+    formData.append("type", type)
+
+    formData.forEach((value, index) => {
+        if (value != "") {
+            data[index] = value
+        }
+    });
+
+    console.log(data);
+    // return false;
+
+    array.push(data);
+
+    if (dataStorageFormJawaban == null) {
+        sessionStorage.setItem('jawaban', JSON.stringify(array));
+    } else {
+        let dataCurrentStorageJawaban = JSON.parse(sessionStorage.getItem('jawaban'));
+        let dataBaru = array.concat(dataCurrentStorageJawaban);
+        sessionStorage.setItem('jawaban', JSON.stringify(dataBaru))
+    }
+
+    const textSelesai = document.querySelector("#textSelesai");
+    let profil = JSON.parse(sessionStorage.getItem('profil'));
+
+    let textSelesaiHtml = `
+        <p class="text-center">Thank you <span class="text-success">${profil.nama}</span> for answering this question.</p>
+        <p class="text-center text-success">${profil.tlpn}</p>
+        <div class="d-flex justify-content-center">
+            <button class="text-center btn btn-sm btn-warning text-white" onClick="lihatJawaban()">
+                Lihat Jawaban
+            </button>
+        </div>
+    `;
+    textSelesai.innerHTML = textSelesaiHtml;
+    content3.classList.add("hidden");
+    content4.classList.remove("hidden");
+}
+
+function lihatJawaban() {
+    alert("OK");
 }
