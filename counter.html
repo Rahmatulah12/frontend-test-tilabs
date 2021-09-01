@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter</title>
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="main">
+
+        <h3 class="text-white text-center">Click Counter</h3>
+        <button id="clickme" class="button">Click Me</button>
+
+        <div style="margin-top: 10px;">
+            <textarea name="counter" id="counter" cols="30" rows="10" class="border-radius" style="font-size: 15pt;"></textarea>
+        </div>
+
+    </div>
+</body>
+
+<script>
+    var button = document.getElementById("clickme"),
+        count = 0,
+        counter = document.querySelector("#counter");
+    button.onclick = function() {
+        count += 1;
+        counter.value = count;
+    };
+</script>
+
+</html>
